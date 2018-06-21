@@ -5,8 +5,8 @@ Created on Wed Aug  3 18:53:23 2016
 @author: arthur
 """
 
-from stormwise_tmdl_benefits_and_bounds import upper_bounds
-from stormwise_tmdl_benefits_and_bounds import benefit_slopes
+from StormWISE_TMDL_Engine.stormwise_tmdl_benefits_and_bounds import upper_bounds
+from StormWISE_TMDL_Engine.stormwise_tmdl_benefits_and_bounds import benefit_slopes
 
 def generate_ampl_dat_file(inYamlDoc):
     ampl = ""   # string containing ampl code to be returned when filled
@@ -15,16 +15,16 @@ def generate_ampl_dat_file(inYamlDoc):
     I = inYamlDoc['I']
     J = inYamlDoc['J']
     K = inYamlDoc['K']
-    KONJ = inYamlDoc['KONJ']  
+    KONJ = inYamlDoc['KONJ']
     T = inYamlDoc['T']
     sets = ['I','J','K','T'] # I = zone, J = landuse, K = GItype, T = benefit
 
-    for s in sets:  
-        ampl = ampl + "set %s := " % s 
+    for s in sets:
+        ampl = ampl + "set %s := " % s
         x = inYamlDoc[s]
         for h in sorted(x):
             ampl += "%s " % h
-        ampl += ";\n"        
+        ampl += ";\n"
     setsonset = {'KONJ': ('K','J')}
     for s in sorted(setsonset):
         s1 = setsonset[s][1]
@@ -33,8 +33,8 @@ def generate_ampl_dat_file(inYamlDoc):
             ampl = ampl + "set %s[%s] := " % (s,h)
             elements = inYamlDoc[s][h]
             if elements == None:
-                value = "" 
-                ampl = ampl + "%s;\n" % value 
+                value = ""
+                ampl = ampl + "%s;\n" % value
             else:
                 for g in sorted(elements):
                     value = g
@@ -59,7 +59,7 @@ def generate_ampl_dat_file(inYamlDoc):
                     ampl += "  %10s" % '.'
             ampl += "\n"
     ampl += ";\n"
-        
+
     # process benefit slope data:
     ampl += "param s: "
     for t in sorted(T):
@@ -67,7 +67,7 @@ def generate_ampl_dat_file(inYamlDoc):
     ampl += " :=\n"
     for i in sorted(I):
         for j in sorted(J):
-          
+
             if KONJ[j] != None:
                 for k in sorted(K):
                     if k in KONJ[j]:
@@ -75,7 +75,7 @@ def generate_ampl_dat_file(inYamlDoc):
                         for t in sorted(T):
                             ampl += "  %15.14f" % benefitSlopes[i][j][k][t]
                         ampl += "\n"
-    ampl += ";\n"        
+    ampl += ";\n"
     return ampl
 
 def generate_ampl_benefit_file(inYamlBenefitDoc):
@@ -89,12 +89,12 @@ def generate_ampl_benefit_file(inYamlBenefitDoc):
     return ampl
 
 '''
-import yaml  
+import yaml
 def main(inYamlFile):
     with open(inYamlFile, 'r') as fin:
         inYamlDoc = yaml.load(fin)
         ampl = generate_ampl_dat_file(inYamlDoc)
-    with open('stormwise_tmdl.dat', 'w') as fout:     
+    with open('stormwise_tmdl.dat', 'w') as fout:
         fout.write(ampl)
         fout.close()
 main('wingohocking.yaml')
