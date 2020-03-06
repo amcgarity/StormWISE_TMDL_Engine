@@ -33,7 +33,7 @@ def stormwise(amplPath,inYamlDoc,inYamlBenefitDoc):
         fout.close()
     call([amplPath,"stormwise_tmdl.run"])
     with open('stormwise_tmdl.yaml', 'r') as fin:
-        solution = yaml.load(fin)
+        solution = yaml.load(fin, Loader=yaml.FullLoader)
         x = solution['x']
         I = inYamlDoc['I']
         J = inYamlDoc['J']
@@ -397,7 +397,7 @@ def evaluate_solution(decisions,s,inYamlDoc):
 import yaml
 def main(inYamlFile):
     with open(inYamlFile, 'r') as fin:
-        inYamlDoc = yaml.load(fin)
+        inYamlDoc = yaml.load(fin, Loader=yaml.FullLoader)
     decisions = stormwise(inYamlDoc)
     print "\nDECISIONS:"
     print yaml.dump(decisions)
